@@ -1,0 +1,41 @@
+name: Create Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check Out Repository
+        uses: actions/checkout@v4
+
+      - name: Set up GitHub CLI
+        uses: azure/setup-github-cli@v1
+
+      - name: Get Last Commit SHA and Date
+        id: commit
+        run: |
+          # Fetch the last commit hash and date to use in the release name
+          COMMIT_SHA=$(git rev-parse --short HEAD)
+          DATE=$(date +%Y-%m-%d)
+          echo "commit_sha=$COMMIT_SHA" >> $GITHUB_ENV
+          echo "date=$DATE" >> $GITHUB_ENV
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1.14.0
+        with:
+          tag: "release-${{ env.date }}"
+          release_name: "Build Release - ${{ env.date }}"
+          body: "Automated release for 8086emu artifacts.\nCommit ${{ env.commit_sha }}"
+          draft: true
+          prerelease: false
+          artifacts: "*.zip"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
