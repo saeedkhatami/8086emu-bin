@@ -30,7 +30,7 @@ jobs:
           tag: "release-${{ env.date }}"
           release_name: "Build Release - ${{ env.date }}"
           body: "Automated release for 8086emu artifacts.\nCommit ${{ env.commit_sha }}"
-          draft: true
+          draft: false
           prerelease: false
           artifacts: "*.zip"
         env:
